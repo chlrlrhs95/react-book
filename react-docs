@@ -1,0 +1,15 @@
+React
+
+엘리먼트란?
+리액트 앱에서의 가장 작은 단위 (컴포넌트의 구성요소)
+
+const element = <h1>Hello, world</h1>;
+ReactDOM.render(element, document.getElementById('root'));
+
+리액트의 엘리먼트는 불변객체이다.
+따라서 UI를 업데이트하여서 보여주기위해서는 새로운 엘리먼트를 만들어야한다.
+
+컴포넌트는 화면서 어떻게 표시되는지 기술하는 React 엘리먼트를반환한다.
+
+리액트
+render()를 하다보면
