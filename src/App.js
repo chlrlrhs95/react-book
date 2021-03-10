@@ -21,10 +21,10 @@ class App extends Component {
         return (
             <div>
                 <button onClick={this.handleClick}>랜덤색상</button>
-                {/* <ErrorBoundary> */}
-                <LifeCycleSample color={this.state.color} />
-                {/* <div>하이{console.log("hi")}</div> */}
-                {/* </ErrorBoundary> */}
+                <ErrorBoundary>
+                    <LifeCycleSample color={this.state.color} />
+                    <div>하이{console.log("hi")}</div>
+                </ErrorBoundary>
             </div>
         );
     }

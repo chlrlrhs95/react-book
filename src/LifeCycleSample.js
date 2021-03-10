@@ -15,6 +15,7 @@ class LifeCycleSample extends Component {
 
     static getDerivedStateFromProps(nextProps, prevState) {
         console.log("getDerivedStateFromProps");
+        console.log(prevState);
         if (nextProps.color !== prevState.color) {
             return {
                 color: nextProps.color,
@@ -28,7 +29,9 @@ class LifeCycleSample extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
+        //이 함수가 실행된 후 state변화가 일어난다.
         console.log("shouldComponentUpdate", nextProps, nextState);
+        console.log(this.state.number);
         return nextState.number % 10 !== 4;
     }
 
@@ -37,26 +40,20 @@ class LifeCycleSample extends Component {
     }
 
     setter() {
-        this.setState(
-            {
-                number: this.state.number + 1,
-            },
-            () => {
-                console.log("clicked!");
-                console.log(this.state.number);
-            }
-        );
-
+        this.setState({
+            number: this.state.number + 1,
+        });
         console.log("setState");
     }
+
     handleClick = () => {
-        this.setter();
         this.setter();
     };
 
     getSnapshotBeforeUpdate(prevProps, prevState) {
         console.log("getSnapshotBeforeUpdate");
         console.log(prevState.number);
+        console.log(this.state.number);
         if (prevProps.color !== this.props.color) {
             return this.myRef.style.color;
         }
@@ -79,7 +76,7 @@ class LifeCycleSample extends Component {
 
         return (
             <div>
-                {this.props.missing.value}
+                {/* {this.props.missing.value} */}
                 <h1 style={style} ref={(ref) => (this.myRef = ref)}>
                     {this.state.number}
                 </h1>

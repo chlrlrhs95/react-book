@@ -27,3 +27,27 @@ javascript는 값복사시에는 깊은복사 => 독립된 값을 가진다( 참
 
 setState는 이벤트 핸들러 내에서 비동기적으로 동작한다.
 하나의 이벤트 핸들러 내에서 여러번 호출된다면 이벤트가 끝날 시점에 state를 일괄적으로 업데이트하고렌더링한다.
+
+중요...
+React의 중요한 특성중 하나인 불변성을 알고 가야한다.
+https://ljs0705.medium.com/react-state%EA%B0%80-%EB%B6%88%EB%B3%80%EC%9D%B4%EC%96%B4%EC%95%BC-%ED%95%98%EB%8A%94-%EC%9D%B4%EC%9C%A0-ec2bf09c1021
+여기서 React가 화면을 업데이트하는 과정을 보자
+
+값만을 비교할 수 있게된다.
+
+setState에대해서?
+setState함수가 실행되면 리액트에서는 이를 감지하고 이벤트핸들러 대기열에 넣는다.
+그리고 일괄적으로 실행을 하게된다.
+
+이렇게 setState가 비동기적ㅇ드로 실행되는 이유는 불필요한 렌더링을 방지하면서 성능을 향상 시키기 때문이라고합니다.
+만약 자식컴포넌트와 부모컴포넌트가 있는데
+자식컴포넌트에서 setState가 일어나고 부모컴포넌트에서 setState가 일어났을때 동기적이라면 자식컴포넌트는 2번의 리렌더링이 일어나게되는 불상사가 일어난다.
+
+여기까지 오케이, 그렇다면 굳이 왜 state는 즉시 업데이트를 하지 않을까? 어디서 될까 궁금해서 
+console을 찍어보니 shouldcomponentUpdate함수이후에 state가 업데이트 되는것을 확인 할 수 있었다.
+
+그리고 이유를 찾아보니
+state가 즉시 업데이트 되지 않는 이유는 props와 state사이의 일관성을 해칠 수 있기 때문이라고 한다.
+
+setState
+https://ko.reactjs.org/docs/react-component.html#setstate
