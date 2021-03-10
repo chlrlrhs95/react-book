@@ -1,0 +1,56 @@
+Chatper 4. 리액트의 이벤트 시스템
+
+이벤트 사용 주의사항.
+1. 이벤트 이름은 camelCase로 표기한다.
+2. 이벤트에 실행할 자바스크립트 코드를 전달하는 것이 아니라 함수형태의 값을 전달한다.
+3. DOM(div, input, button.. etc) 요소에만 이벤트를 설정할 수 있다.
+-> 우리가 직접만드는 <MyComponent onClick={doSomething}/> 이렇게하면 이벤트가 아닌 
+MyComponent에서 props로 onClick을 전달받은것 뿐. 즉, MyComponent에서 props.onClick = doSomething이 된다.
+여기서는 <div onClick = {this.props.onClick}/> 같ㄴ이 이벤트 설정 가능.
+
+SyntheticEvent라는 객체로 웹브라우저 네이티브 이벤트를 감싼다.
+이벤트가 끝나면 초기화 되어버리므로 비동기적으로 이벤트 객체를 참조할 경우에는 e.persist()함수를
+호출해 주어야한다.
+
+이벤트 풀링?
+풀 -> 재사용 될 준비를 하는 자원Pool
+
+1. SyntheticEvent Pool에서 객체 하나를 get(참조).
+2. 이벤트정보를 SyntheticEvent객체에 저장.
+3. 이벤트 리스너 실행.
+4. SyntheticEvent초기화.
+
+Pool에서의 자원의 상태
+POOLED 이벤트 풀에 등록되어 대기중인 상태
+PERSISTED 이벤트 처리가 끝낫음에도 남아있는 상태
+IN_USE 네이티브 이벤트를 할당받아 SyntheticEvent로 Wrapping된 상태.
+이렇게 볼 수 있는데, 여기서 기본적으로 persist를 불러주지 않으면 POOLED와 IN_USE의 상태를 왔다갔다한다.
+따라서 비동기적으로 이벤트 객체를 참조할 경우에는 해당 상태를 기억하고 있기위해 persist함수를 호출 해 주어야한다.
+
+PS. 물론 pool에 status와 같은 상태를 나타내는 코드는 없다고합니다.
+또한, react v.17부터는 이벤트풀링자체가 사용되지않는다고합니다.
+(https://ko.reactjs.org/docs/legacy-event-pooling.html)
+
+this에대한 이해는 계속해서 어려운거같다....ㅠ
+
+state에 대한 실습.
+
+input 변화에대한 이벤트
+onChange
+input 클릭에대한 이벤트
+onClick
+input 키프레스에대한 이벤트
+onKeyPress
+
+함수형 컴포넌트에서 state관리
+const [form, setForm] = useState(...타입)
+
+클래스 컴포넌트에서 state 관리
+
+state = {
+    ...
+}
+
+this.setState({
+    ...
+}, after set state)
