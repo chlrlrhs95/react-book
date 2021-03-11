@@ -8,6 +8,10 @@ Chatper 4. 리액트의 이벤트 시스템
 MyComponent에서 props로 onClick을 전달받은것 뿐. 즉, MyComponent에서 props.onClick = doSomething이 된다.
 여기서는 <div onClick = {this.props.onClick}/> 같ㄴ이 이벤트 설정 가능.
 
+참조(https://ko.reactjs.org/docs/events.html)
+SyntheticEvent?
+이벤트 핸들러는 모든 브라우저에서 이벤트를 동일하게 처리하기 위한 이벤트 래퍼 SyntheticEvent 객체를 전달받습니다.
+
 SyntheticEvent라는 객체로 웹브라우저 네이티브 이벤트를 감싼다.
 이벤트가 끝나면 초기화 되어버리므로 비동기적으로 이벤트 객체를 참조할 경우에는 e.persist()함수를
 호출해 주어야한다.
@@ -20,16 +24,16 @@ SyntheticEvent라는 객체로 웹브라우저 네이티브 이벤트를 감싼�
 3. 이벤트 리스너 실행.
 4. SyntheticEvent초기화.
 
-Pool에서의 자원의 상태
-POOLED 이벤트 풀에 등록되어 대기중인 상태
-PERSISTED 이벤트 처리가 끝낫음에도 남아있는 상태
-IN_USE 네이티브 이벤트를 할당받아 SyntheticEvent로 Wrapping된 상태.
+*Pool에서의 자원의 상태
+    - POOLED 이벤트 풀에 등록되어 대기중인 상태
+    - PERSISTED 이벤트 처리가 끝낫음에도 남아있는 상태
+    - IN_USE 네이티브 이벤트를 할당받아 SyntheticEvent로 Wrapping된 상태.
 이렇게 볼 수 있는데, 여기서 기본적으로 persist를 불러주지 않으면 POOLED와 IN_USE의 상태를 왔다갔다한다.
 따라서 비동기적으로 이벤트 객체를 참조할 경우에는 해당 상태를 기억하고 있기위해 persist함수를 호출 해 주어야한다.
 
-PS. 물론 pool에 status와 같은 상태를 나타내는 코드는 없다고합니다.
+PS. 물론 pool에 IN_USE와 같은 상태를 나타내는 코드는 없다고합니다.
 또한, react v.17부터는 이벤트풀링자체가 사용되지않는다고합니다.
-(https://ko.reactjs.org/docs/legacy-event-pooling.html)
+참조(https://ko.reactjs.org/docs/legacy-event-pooling.html)
 
 this에대한 이해는 계속해서 어려운거같다....ㅠ
 
