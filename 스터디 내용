@@ -1,0 +1,86 @@
+잠깐! 그냥 재밌는 내용
+Reconciliation 과 rendering
+DOM은 React가 render할 수 있는 환경중 하나 일 뿐이다. 다른 주요 타겟은 react-native를 통한 IOS and Android View이다.
+그래서 React는 reconciliation과 rendering 별도의 단계로 설계되었기 때문에 가능한 일이다.
+tree의 바뀐 부분을 계산하는 reconciler, 그 정보를 이용해 UI를 업데이트하는 renderer.
+
+React Fiber.
+참조(https://indepth.dev/posts/1008/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react)
+이걸 보기위해서 먼저 Fiber가 먼지 알아봤습니다.
+
+React Fiber란 무엇인가?
+reimplementation of React's core algorithm, 리액트의 코어 알고리즘을 재구현한것이라고 합니다.
+여기서 코어알고리즘에는 reconciler가 포함된다. 
+
+참조(https://medium.com/@codesquad_yoda/%EB%82%A8%EB%8B%A4%EB%A5%B8-%EA%B0%9C%EC%84%A0%EB%B0%A9%EB%B2%95%EC%9D%84-%EB%8B%A4%EC%8B%9C-%EB%B3%B4%EC%97%AC%EC%A4%80-%ED%8E%98%EC%9D%B4%EC%8A%A4%EB%B6%81%EC%9D%98-react-fiber-80b7ca5bd9bb)
+그렇다면 왜 이것을 재구현했을까?
+비동기로 이루어지는 작업들이 DOM조작에 밀려서 생기는 우선순위 문제로 call stack에 들어가기까지 오래걸려서 생기는 문제가 있었다.
+물론 이것이 react의 문제가아니라 single-thread환경에서 어쩔 수 없는 문제이다.
+single-thread에서 비동기작업들은 task-queue에서 대기하고있다가 call-stack이 비게 되면 실행을 하게 되는데 DOM조작이 무수히 많아서
+call-stack 빽빽할 경우 너무 오래 기다리는게 문제가 되는 것이다.
+예로 애니메이션같이 비동기적으로 처리되는 작업을 들수있다.
+예제로 이 영상을 볼 수 있다.
+비교 영상 : https://claudiopro.github.io/react-fiber-vs-stack-demo/
+
+key point!
+- UI에서 모든 업데이트가 즉시 적용될 필요는 없다. 실제로 프레임이 손실되고 사용자 환경이 저하될 수 있다.
+- 업데이트유형마다 우선순위가 다르다. 애니메이션 업데이트의 경우는 더욱더 높은 우선순위를 가져야한다.
+- 데이터가 사용 가능해졌을 때 계산이 되는 push접근 방식이 아닌, 데이터가 필요할 때 까지 계산을 지연하는 pull 접근 방식을 채택한다.
+ㄴ> setState가 왜 비동기적인지에 대한 이유가 될 수 있습니다.
+
+참조 (https://github.com/acdlite/react-fiber-architecture)
+그렇다면 어떻게 개선했을까?
+즉, 지금 필요하지 않은 작업이라면 나중에 작업을 하도록 하면 되는것이다. (말로는 쉽다.)
+이렇게 하기위해서는
+1. 일을 멈추고 나중에 돌아오는 것.
+2. 다른 타입의 일에대해서는 우선순위를 정하는 것
+3. 이전에 완료된 일을 재사용하는것
+4. 더이상 필요하지 않은 일은 중단 하는 것.
+이 4가지를 할 수 있어야 한다.
+위에 것들을 하기위해서는 일을 유닛으로 나누어야하고 이 유닛을 fiber라고 표현한다.
+
+이 위의 4가지 문제를 해결하는데도움이되는 API인 requestIdleCallback을 이용합니다.
+이것은 idle period(가동되지않는 기간)동안 호출될 낮은 우선순위 함수를 예약하고, 다음 애니메이션프레임에서 호출 될 높은 우선순위 함수를 요청합니다.
+문제는이런 API를 사용하려면 렌더링 작업을 증분단위로 분할 할 방법이 필요합니다. 기존의 호출스택에 의존하는 것은 스택이 빌 때까지 계속 작동합니다.
+핵심은 일을 나누는 것이였는데 이를 가능하게 한것이 바로 fiber이다.
+
+참조(https://medium.com/react-in-depth/the-how-and-why-on-reacts-usage-of-linked-list-in-fiber-67f1014d0eb7)
+어떻게 재구현 했길래?
+tree의 구조를 linke-list구조로 바꾸고 linked-list traversal을 통하여 call-stack에 쌓이지 않을 수 있게 
+기본의 브라우저 built-in 구조였던 tree구조와는 다르게 linked-list구조로 만들면서 tree를 탐색하여도 call-stack에서 쌓이지 않음.
+마치 stack frame이 메모리에 존재하는것과 같다고 보여진다.
+다음에 실행되어야할 노드를 참조하여 스택을 제어할 수 있게된다.
+이렇게 멈추고 시작하는것을 언제든 자유롭게 컨트롤 할 수 있게됨으로써 requestIdleCallbak API를 사용할 수 있게 된다!
+
+@Reconciliation 과정
+변화 감지. (ex, setState)
+해당 fiber에 대해서 dirtyCheck!
+해당 fiber까지 빠르게 탐색한다.
+
+1. 렌더링단계를 시작한다.
+렌더링 단계에서는 업데이트를 적용하고 UI에서 업데이트 해야하는 항목을 파악해야한다.
+ => alternate tree와 effects list
+
+무엇이 업데이트 되어야하는지 어떻게 확인하는가?
+current트리의 노드와 workInProgress트리의 노드는 각각 대응하는 fiber참조값을 가지고 있습니다.
+그리고 state및 props의 업데이트가 side-effect을 일으키는 방법을 확인 할 수 있다고 합니다.
+그래고 각 fiber노드는 그것과 연관된 effects를 가질 수 있고 그것들을 effectTag필드에 인코딩한다.
+Fiber의 effects는 업데이트이후 수행해야하는 작업을 정의합니다.
+
+이를 통해서 effect list를 만들 수 있다.
+Effects list란?
+effect가 있는 fiber노드의 선형목록을 작성하는 것이다. 트리보다 훨 씬 빠르며 side-effects가 없는 노드에 시간을 할애 할 필요가 없기에 매우 효율적이다.
+
+2. 커밋단계를 시작한다.
+effects list를 보며 alternate 트리의 fiber를 실제 DOM에 적용한다.
+
+
+참조(https://goidle.github.io/react/in-depth-react-intro/)
+
+*rednering phase 내부구조
+참조(https://velog.io/@dev-mish-mash/%EB%A6%AC%EC%95%A1%ED%8A%B8%EC%9D%98-%EC%A1%B0%ED%99%94Reconciliation-%EA%B3%BC%EC%A0%95-%EC%A0%95%EB%A6%AC)
+참조(https://vimeo.com/302222454?source=post_page)
+performUnitofWork => 현재 workInProgress의 beginWork실행, 자식 없으면 complteUniOfWork 실행
+beginWork => 다음에 처리할 child에대한 포인터 혹은 null을 반환
+completeUnitOfWork => 현재의 유닛을 완료(complteeWork)하고 sibling으로 이동한다. 더이상의 sibling이 없다면 parent fiber를 return한다. 부모로 올라간다.
+completeWork => 현재유닛을 완료하는 함수.
