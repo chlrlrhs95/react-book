@@ -40,8 +40,10 @@ key point!
 위에 것들을 하기위해서는 일을 유닛으로 나누어야하고 이 유닛을 fiber라고 표현한다.
 
 이 위의 4가지 문제를 해결하는데도움이되는 API인 requestIdleCallback을 이용합니다.
-이것은 idle period(가동되지않는 기간)동안 호출될 낮은 우선순위 함수를 예약하고, 다음 애니메이션프레임에서 호출 될 높은 우선순위 함수를 요청합니다.
-문제는이런 API를 사용하려면 렌더링 작업을 증분단위로 분할 할 방법이 필요합니다. 기존의 호출스택에 의존하는 것은 스택이 빌 때까지 계속 작동합니다.
+이것은 idle period(가동되지않는 기간)동안 호출될 낮은 우선순위 함수를 예약하고,
+ 다음 애니메이션프레임에서 호출 될 높은 우선순위 함수를 요청합니다.
+문제는이런 API를 사용하려면 렌더링 작업을 증분단위로 분할 할 방법이 필요합니다. 
+기존의 호출스택에 의존하는 것은 스택이 빌 때까지 계속 작동합니다.
 핵심은 일을 나누는 것이였는데 이를 가능하게 한것이 바로 fiber이다.
 
 참조(https://medium.com/react-in-depth/the-how-and-why-on-reacts-usage-of-linked-list-in-fiber-67f1014d0eb7)
@@ -84,3 +86,22 @@ performUnitofWork => 현재 workInProgress의 beginWork실행, 자식 없으면 
 beginWork => 다음에 처리할 child에대한 포인터 혹은 null을 반환
 completeUnitOfWork => 현재의 유닛을 완료(complteeWork)하고 sibling으로 이동한다. 더이상의 sibling이 없다면 parent fiber를 return한다. 부모로 올라간다.
 completeWork => 현재유닛을 완료하는 함수.
+
+
+1. setState가 불린다.
+2. 해당컴포넌트에 State 변경감지 EventCallback이 불린다.
+3. EventCallback에서 자기 컴포넌트를 더티컴포넌트큐에 추가하고 dirty check한다.
+4. VDOM트리 순회하며 dirty check된 컴포넌트를 찾는다.
+5. dirty check된 컴포넌트부터 컴포넌와 컴포넌트의 자식들을 새로 업데이트한다.
+이때 scu 혹은 memo로직을 검사(리렌더링 조건검사)하고 만약에, 리렌더링 조건에 부합하지 않다면 업데이트하지 않는다. 그 이전의 컴포넌트를 쓴다.  
+6. current VDOM과 finishedWork Tree(WIP VDOM)에 디핑알고리즘 적용해서 effects list를 생성한다.
+7. effects list들 기존 DOM에 적용한다.
+8. DOM트리가 재구성되고 브라우저 렌더링 과정을 거친다.
+
+함수형 컴포넌트
+import시 함수이름으로 함수호출 가능한가?
+
+key는 변경되지않는데 state만변경 되는 경우
+
+
+
