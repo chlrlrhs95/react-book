@@ -1,0 +1,13 @@
+$red: #fa5252;
+$orange: #fd7e14;
+$yellow: #fcc419;
+$green: #40c057;
+$blue: blue;
+$indigo: indigo;
+$violet: violet;
+
+@mixin square($size) {
+    $caluclated: 32px * $size;
+    width: $caluclated;
+    height: $caluclated;
+}
