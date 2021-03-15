@@ -1,0 +1,23 @@
+.TodoTemplate {
+    width: 512px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 6rem;
+    margin-bottom: 6rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.app-title {
+    background: #22b8cf;
+    color: white;
+    height: 4rem;
+    font-size: 1.5rem;
+    display: flex; //flex형식으로 보여라.
+    align-items: center; //상하정렬
+    justify-content: center; // 좌우정렬
+}
+
+.content {
+    background: white;
+}
