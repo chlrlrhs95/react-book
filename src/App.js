@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import Home from "./Home";
+import { Route, Link, Switch } from "react-router-dom";
+import About from "./About";
+import Profiles from "./Profiles";
+import HistorySample from "./HistorySample";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <div>
+            <ul>
+                <li>
+                    <Link to="/">홈</Link>
+                </li>
+                <li>
+                    <Link to="/about">소개</Link>
+                </li>
+                <li>
+                    <Link to="/profiles">프로필</Link>
+                </li>
+                <li>
+                    <Link to="/history">History 예제</Link>
+                </li>
+            </ul>
+
+            <hr />
+            <Switch>
+                <Route exact path="/" component={Home} />
+                <Route path={["/info", "/about"]} component={About} />
+                <Route path="/profiles" component={Profiles} />
+                <Route path="/history" component={HistorySample} />
+                <Route
+                    render={({ location }) => (
+                        <div>
+                            <h2>이 페이지는 존재하지 않습니다:)</h2>
+                            <p>{location.pathname}</p>
+                        </div>
+                    )}
+                />
+            </Switch>
+        </div>
+    );
 }
 
 export default App;
