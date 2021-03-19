@@ -1,0 +1,12 @@
+API키 : fe3bc77ad91545f9b4b11fbe45e7ade0
+
+1.전체뉴스 불러오기
+GET https://newsapi.org/v2/top-headlines?country=kr&apiKey=fe3bc77ad91545f9b4b11fbe45e7ade0
+
+2.특정카테고리 뉴스 불러오기
+GET https://newsapi.org/v2/top-headlines?country=kr&category=business&apiKey=fe3bc77ad91545f9b4b11fbe45e7ade0
+
+category : business entertainment health science sports technology
+
+
+https://developer.mozilla.org/ko/docs/Web/CSS/Reference
