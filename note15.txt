@@ -1,0 +1,33 @@
+전역적으로 필요한 상태를 관리해야 할 때는 어떻게 해야 할까??
+ㄴ> 리액트 애플리케이션은 props로 데이터를 전달하기 때문에 여기저기서 필요한 데이터는 최상위 컴포넌트의 state에 넣어서 관리한다. (ex, App컴포넌트 )
+
+그렇기 때문에 393쪽의 15-3의 그림을 보듯이 G의 컴포넌트에서 상태업데이트를 전달 하기위해서는 많은 컴포넌트를 지나야합니다.
+ㄴ> 유지보수성이 많이 떨어지게된다! 필요하지않은 branch component에서 스테이트를 필요로 하기 때문!
+
+이렇기 때문에 Mobx같은 상태관리 라이브러리를 사용하여 전역 상태관리작업을 더 편하게 한다.
+16.3v이후에는 Context API가 많이 개선되어서 별도의 라이브러리를 사용하지 않아도 전역상태를 손쉽게 관리할 수 있다.
+
+큰그림으로 보는 Context API 전역상태 관리 흐름 15-3그림.
+
+새로운 Context를 만드는 함수 => createContext
+
+참조 https://ko.reactjs.org/docs/context.html
+여기서 Consumer와 Provider를 옵저버패턴과 같이 설명한다.
+Context.Provider는 구독하고있는 하위 컴포넌트에게 context의 변화를 알리는 역할.
+Context.Consumer는 context를 구독하는 컴포넌트로 context의 변화를 감지하는 역할.
+
+Provider 하위에서 context를 구독하는 모든 컴포넌트는 Provider의 value prop가 바뀔 때마다 다시 렌더링 됩니다.
+
+context값을 업데이트해야하는 경우에는 어떻게 해야할까?
+동적 context를 만들어보자.
+
+context내에서는 상태값만이아닌 함수또한 가지고 있을 수 있다.
+context에서 상태는 state, 함수는 action으로 객체를 따로 만들어 전달 해 주면 다른 컴포넌트에서 접근 하기 편하다.
+
+위처럼 만들게 되면 ContextConsumer로 state에 접근이 가능하게된다.
+value의 action혹은 state등 value를 바꾸고 싶은 경우에는 ContextProvider로접근하여 변경하면 된다.
+
+onContextMenu => 마우스 오른쪽 버튼 클릭 이벤트
+e.preventDefault => 오른쪽 버튼클릭시 메뉴 뜨는거 무시.
+
+useContext Hook 사용하기!
