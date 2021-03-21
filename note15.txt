@@ -11,6 +11,16 @@
 
 새로운 Context를 만드는 함수 => createContext
 
+참조 https://react-etc.vlpt.us/04.render-prop.html
+render props?
+props에 JSX를 렌더링하는 '함수'를 전달하는 것이다.
+그렇다면 왜 이렇게 할까?
+
+참조에서의 그림을 보듯이 Example 컴포넌트의 state를 사용하기에 아주 용이하다.
+Example 컴포넌트의 state를 많은 곳에서 사용할 텐데, 다양한 폼으로 사용하고 싶을것이다.
+그때마다 그 폼에 맞는 새로운 렌더를 하는 컴포넌트를 만들어야 할 것이다.
+하지만 render props를 사용하면 그러지않고 재사용을 할 수 있다.
+
 참조 https://ko.reactjs.org/docs/context.html
 여기서 Consumer와 Provider를 옵저버패턴과 같이 설명한다.
 Context.Provider는 구독하고있는 하위 컴포넌트에게 context의 변화를 알리는 역할.
