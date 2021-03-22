@@ -1,0 +1,81 @@
+이번장에서는 리덕스 라이브러리를 리액트 프로젝트에서 사용해보자.
+
+프레젠테이셔널 컴포넌트 => props를 받아와 UI에 보여주기만 하는 컴포넌트
+컨테이너 컴포넌트 => 보여주기도 하고 실제 액션을 dispatch하기도 하는 컴포넌트
+
+
+프로젝트 실습흐름.
+431쪽
+먼저 UI를 보여주는 프레젠테이셔널 컴포넌트를 작성한다.
+
+436쪽
+그리고 리덕스관련코드를 작성해야한다. action과 action생성함수, 리듀서코드를 작성해야하는데 각각 다른파일로 하는 방법과 기능별로 묵어서 하나의 파일에 하는 방법이 있다.
+기능별로 묶어서 하나의 파일에 한는 방법을 Ducks 패턴이라 부르며 여기 예제에서는 이 패턴으로 진행한다.
+
+442쪽
+스토에에는 하나의 리듀서만을 사용해야한다. 그렇기 때문에 combineReducers를 통해 여러개의 리듀서를 하나로 합쳐주어야 한다.
+
+443쪽
+리덕스, Provider?
+참조 https://react-redux.js.org/api/provider
+Redux store를 하위 컴포넌트에서 이용가능하게 해준다.
+
+리덕스와 연동하려면 react-redux에서 제공하는 connect함수를 사용해야한다.
+mapStateToProps : store의 state를 파라미터로 받아와서 반환하는 객체의 내부값을 props로 사용한다.
+mapDispatchToProps : store의 내장함수 dispatch를 파라미터로 받아와서 반환하는 객체의 내부값을 컴포넌트의 props로 사용한다.
+
+452쪽
+dispatch로 바인드를 할 함수가 너무 많다면?
+bindActionCreators를 사용해 보자.
+
+453쪽 
+객체형태로 넣어주게 되면, connect함수가 알아서 bindActionCreators작업을 해준다.
+=> 그래도 따로 변수 선언하고 하는게 코드를 볼때 직관적이고 보기쉬워보인다(주관)
+
+457쪽
+리덕스 더편하게 사용하기. 여기서부터는 적용해도 되고 안해도 되는 부분인것 같다.
+createAction => 액션생성함수를 생성하는 함수.
+
+export const increase = createAction(INCREASE);
+export const increase = () => ({ type: INCREASE });
+똑같은결과값을 도출한다.
+
+그렇다면 
+export const toggle = (id) => ({
+  type: TOGGLE,
+  id,
+}); 처럼 파라미터가 있고 payload가 있는경우에는?
+
+export const toggle = createAction(TOGGLE, id = > id);
+createAction함수의 두번째 파라미터에 함수를 넣어준다.
+
+export const toggle = () => ({
+  type: TOGGLE,
+  id,
+});
+export const toggle = createAction(TOGGLE, () = > id);
+createAction함수의 두번째 파라미터에 함수를 넣어준다.
+즉, 두번째파라미터의 함수는 파라미터 => 페이로드
+
+460쪽 
+handleActions => 리듀서함수를 생성하는 함수.
+handleActions에서 원래 action.todos, action.todo 같이 임의의 이름으로의 접근 방식은 모두action.payload로 접근해야한다.
+461쪽 그래서 헷갈릴수 잇기때문에 비구조화 할당문법으로 payload를 받아서 사용할 수있다.
+
+463쪽
+immer 적용하기
+
+464쪽
+Hook사용하기, useSelector와 useDispatch
+
+useSelector로 상태 조회
+useDispatch로 액션 디스패치하기.
+useStore로 컴포넌트 내부에서 리덕스 스토어 객체 직접 사용하기.
+useActions => 리덕스 개발팀에서 필요하지 않다 판단 제거된 hook이라고한다.
+액션생성함수를 액션을 디스패치하는 함수로 변환해준다.
+
+그렇다면 connect함수와 hook중 무엇을 사용해야할까?
+더 편한거 사용해라~
+
+connect함수를 사용하면 해당 컨테이너 컴포넌트의 부모 컴포넌트가 리렌더링될 때 해당 컨테이너 컴포넌트의 props가 바뀌지 않았다면 리렌더링이 자동으로 방지되어 성능이 최적화된다.
+useSelector을 사용하면 React.memo를사용하여 직접 최적화를 해주어야한다.
